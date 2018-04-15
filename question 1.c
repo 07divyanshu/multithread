@@ -4,16 +4,22 @@
 void *th_function1();
 void *th_function2();
 void *th_function3();
+int i,n;
+int arr1[20];
 
-int arr1[5]={23,12,45,13,55};
-int arr2[5]={23,12,45,13,55};
-int arr3[5]={23,12,45,13,55};
 pthread_mutex_t lock;
 int minimum,maximum;
 float sum=0.0;
 
 int main()
 {
+	printf("how many element you want to enter");
+	scanf("%d",&n);
+for(i=0;i<n;i++)
+{
+	printf("Enter the value");
+	scanf("%d",&arr1[i]);
+}
 	pthread_mutex_init(&lock,NULL);
 	pthread_t thread1,thread2,thread3;
 	pthread_create(&thread1,NULL,th_function1,NULL);
@@ -31,33 +37,37 @@ int main()
 }
 void *th_function1()
 {
-    int i;
-	for(i=0;i<5;i++)
+	pthread_mutex_lock(&lock);
+	for(i=0;i<n;i++)
 	{
 	  sum=sum+arr1[i];
     }
 	sum=sum/5;
+	pthread_mutex_unlock(&lock);
 }
 void *th_function2()
 {
-	int i;
-	minimum=arr2[0];
-	for(i=0;i<5;i++)
+	pthread_mutex_lock(&lock);
+	minimum=arr1[0];
+	for(i=0;i<n;i++)
 	{	
-		if(arr2[i]<minimum)
+		if(arr1[i]<minimum)
 		{	
-			minimum=arr2[i];
+			minimum=arr1[i];
 		}	
 	}
+	
+	pthread_mutex_unlock(&lock);
 }
 void *th_function3()
 {
-	int i;
-	maximum=arr3[0];
-	for(i=0;i<5;i++)
-	{	if(arr3[i]>maximum)
+	pthread_mutex_lock(&lock);
+	maximum=arr1[0];
+	for(i=0;i<n;i++)
+	{	if(arr1[i]>maximum)
 		{	
-			maximum=arr3[i];
+			maximum=arr1[i];
 		}	
 	}
+pthread_mutex_unlock(&lock);
 }
